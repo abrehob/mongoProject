@@ -4,21 +4,22 @@
 
 
 var city_average_friendcount_mapper = function() {
-	var hc = this.hometown.city;
-	emit(hc, {"city": this.hometown.city, "numFriends": this.friends.length});
+	emit(this.hometown.city, {"numFriends": this.friends.length, "counter": 1});
 };
 
 var city_average_friendcount_reducer = function(key, values) {
-    var count = 0;
+    var sum = 0;
+    var numUsers = 0;
+
     for (var i = 0; i < values.length; i++) {
-    	count += values[i]["numFriends"];
+    	sum += values[i]["numFriends"];
+    	numUsers += values[i]["counter"];
     }
 
-    var num = count / values.length;
-	return {"city": key, "numFriends": num};
+	return {"numFriends": sum, "counter": numUsers};
 };
 
 var city_average_friendcount_finalizer = function(key, reduceVal) {
-  var ret = reduceVal["numFriends"];
-  return ret;
+  	var ret = reduceVal["numFriends"] / reduceVal["counter"];
+  	return ret;
 };
